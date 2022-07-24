@@ -1,0 +1,74 @@
+{
+    "family": "Web-App-Task",
+    "taskDefinitionArn": "arn:aws:ecs:<region>:1234567:task-definition/Web-App-Task:1",
+    "networkMode": "bridge",
+    "revision": 1,
+    "volumes": [
+      {
+        "name": "php-code",
+        "dockerVolumeConfiguration": {
+          "scope": "task",
+          "driver": "local"
+        }
+      }
+    ],
+    "containerDefinitions": [
+      {
+        "name": "php-app-container",
+        "image": "12345678.dkr.ecr.<region>.amazonaws.com/php-app:latest",
+        "cpu": 0,
+        "memory": 256,
+        "memoryReservation": 256,
+        "environment": [],
+        "mountPoints": [
+          {
+            "readOnly": null,
+            "containerPath": "/var/www/html/",
+            "sourceVolume": "php-code"
+          }
+        ],
+        "portMappings": [
+          {
+            "hostPort": 0,
+            "protocol": "tcp",
+            "containerPort": 9000
+          }
+        ]
+      },
+      {
+        "name": "nginx-web-container",
+        "image": "12345678.dkr.ecr.<region>.amazonaws.com/nginx-web:latest",
+        "mountPoints": [
+          {
+            "readOnly": null,
+            "containerPath": "/var/www/html/",
+            "sourceVolume": "php-code"
+          }
+        ],
+        "portMappings": [
+          {
+            "hostPort": 0,
+            "protocol": "tcp",
+            "containerPort": 80
+          }
+        ],
+        "essential": true,
+        "cpu": 256,
+        "memory": 256,
+        "links": [
+          "app-container:app-container"
+        ]
+      }
+    ],
+    "taskRoleArn": "<taskRoleArn>",
+    "executionRoleArn": "<executionRoleArn>",
+    "compatibilities": [
+      "EXTERNAL",
+      "EC2"
+    ],
+    "requiresAttributes": [],
+    "pidMode": null,
+    "requiresCompatibilities": [
+      "EC2"
+    ]
+  }
